@@ -5,3 +5,7 @@ api_platform:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json'] # 👈 ajout de ce format
+        html: ['text/html'] # optionnel, si tu veux aussi voir la version HTML

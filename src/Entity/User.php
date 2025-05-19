@@ -3,13 +3,30 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\EventListener\UserListener;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
+#[ORM\EntityListeners([UserListener::class])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[ApiResource]
-class User
+#[ApiResource(operations: [
+    new GetCollection(),
+    new Get(),
+    new Put(),
+    new Post(),
+    new Patch(formats: ["json"]),
+    new Delete()
+])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,9 +43,23 @@ class User
     #[ORM\JoinColumn(nullable: false)]
     private ?UserRole $role = null;
 
+
+    public function getRoles(): array
+    {
+        $roleName = $this->role->getName();
+        return [$roleName];
+    }
+
+    public function eraseCredentials(): void {}
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 
     public function getEmail(): ?string
