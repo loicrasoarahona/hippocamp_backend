@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\StudentRepository;
+use DateTime;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
@@ -30,6 +32,9 @@ class Student
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTime $birthdate = null;
 
     public function getId(): ?int
     {
@@ -92,6 +97,18 @@ class Student
     public function setMUser(User $m_user): static
     {
         $this->m_user = $m_user;
+
+        return $this;
+    }
+
+    public function getBirthdate(): ?\DateTime
+    {
+        return $this->birthdate;
+    }
+
+    public function setBirthdate(\DateTime $birthdate): static
+    {
+        $this->birthdate = $birthdate;
 
         return $this;
     }
