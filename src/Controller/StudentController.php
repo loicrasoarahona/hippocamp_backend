@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Student;
 use App\Entity\User;
 use App\Entity\UserRole;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,7 @@ class StudentController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (
-            empty($data) || empty($data['name']) || empty($data['surname']) || empty($data['email']) || empty($data['password'] || empty($data['address'] || empty($data['birthdate'])
+            empty($data) || empty($data['name']) || empty($data['surname']) || empty($data['email']) || empty($data['password']) || empty($data['address']) || empty($data['birthdate'])
         ) {
             return $this->json(['error' => 'Invalid data'], 400);
         }
@@ -54,7 +55,7 @@ class StudentController extends AbstractController
             $student->setSurname($data['surname']);
             $student->setEmail($data['email']);
             $student->setAddress($data['address']);
-            $student->setBirthdate($data['birthdate']);
+            $student->setBirthdate(new DateTime($data['birthdate']));
 
             $em->persist($student);
 

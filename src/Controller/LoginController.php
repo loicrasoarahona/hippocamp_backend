@@ -20,7 +20,7 @@ class LoginController extends AbstractController
     {
         $user = $this->security->getUser();
 
-        $normalizedUser = $this->serializer->normalize($user);
+        $normalizedUser = $this->serializer->normalize($user, null, ['groups' => ['user:collection', 'userRole:collection']]);
 
 
         return $this->json($normalizedUser);
