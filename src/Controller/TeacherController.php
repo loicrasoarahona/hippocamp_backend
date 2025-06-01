@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Student;
+use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserRole;
 use DateTime;
@@ -13,17 +13,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/normal_api/students', name: 'api_students_')]
-class StudentController extends AbstractController
+#[Route('/normal_api/teachers', name: 'api_teachers_')]
+class TeacherController extends AbstractController
 {
+    public function __construct(private EntityManagerInterface $em, private SerializerInterface $serializer) {}
 
-    public function __construct(private SerializerInterface $serializer) {}
+    #[Route('/create-teacher', methods: ['POST'])]
+    public function createTeacher(Request $request): JsonResponse
+    {
 
-    #[Route('/signup', methods: ['POST'])]
-    public function signup(
-        Request $request,
-        EntityManagerInterface $em,
-    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         if (
@@ -32,10 +30,10 @@ class StudentController extends AbstractController
             return $this->json(['error' => 'Invalid data'], 400);
         }
 
-        $em->getConnection()->beginTransaction();
+        $this->em->getConnection()->beginTransaction();
 
         // find student role
-        $role = $em->getRepository(UserRole::class)->findOneBy(['name' => 'student']);
+        $role = $this->em->getRepository(UserRole::class)->findOneBy(['name' => 'teacher']);
         if (empty($role)) {
             return $this->json(['error' => 'undefined student role'], 500);
         }
@@ -46,27 +44,27 @@ class StudentController extends AbstractController
             $user->setEmail($data['email']);
             $user->setPassword($data['password']);
             $user->setRole($role);
-            $em->persist($user);
+            $this->em->persist($user);
 
-            // 2. Création du student associé
-            $student = new Student();
-            $student->setMUser($user);
-            $student->setName($data['name']);
-            $student->setSurname($data['surname']);
-            $student->setEmail($data['email']);
-            $student->setAddress($data['address']);
-            $student->setBirthdate(new DateTime($data['birthdate']));
+            // 2. Création du teacher associé
+            $teacher = new Teacher();
+            $teacher->setMUser($user);
+            $teacher->setName($data['name']);
+            $teacher->setSurname($data['surname']);
+            $teacher->setEmail($data['email']);
+            $teacher->setAddress($data['address']);
+            $teacher->setBirthdate(new DateTime($data['birthdate']));
 
-            $em->persist($student);
+            $this->em->persist($teacher);
 
-            $em->flush();
-            $em->getConnection()->commit();
+            $this->em->flush();
+            $this->em->getConnection()->commit();
 
-            $normalized = $this->serializer->normalize($student);
+            $normalized = $this->serializer->normalize($teacher);
 
             return $this->json($normalized, 201);
         } catch (\Throwable $e) {
-            $em->getConnection()->rollBack();
+            $this->em->getConnection()->rollBack();
             return $this->json([
                 'error' => 'Transaction failed',
                 'details' => $e->getMessage()
