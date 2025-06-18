@@ -65,6 +65,13 @@ class Course
     #[ORM\ManyToMany(targetEntity: CourseCategory::class, inversedBy: 'courses')]
     private Collection $categories;
 
+    #[Groups(['course:collection'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $duration = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
@@ -168,6 +175,30 @@ class Course
     public function removeCategory(CourseCategory $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getDuration(): ?string
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?string $duration): static
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
