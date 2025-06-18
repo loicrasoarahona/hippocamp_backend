@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\CustomFilters\CaseInsensitiveSearchFilter;
@@ -16,6 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: TeacherRepository::class)]
 #[ApiResource]
 #[ApiFilter(CaseInsensitiveSearchFilter::class, properties: ["name", "surname"])]
+#[ApiFilter(SearchFilter::class, properties: ['authorized' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['name'])]
 class Teacher
 {
@@ -54,6 +56,9 @@ class Teacher
      */
     #[ORM\ManyToMany(targetEntity: Course::class, mappedBy: 'teachers')]
     private Collection $courses;
+
+    #[ORM\Column]
+    private ?bool $authorized = false;
 
     public function __construct()
     {
@@ -161,6 +166,18 @@ class Teacher
         if ($this->courses->removeElement($course)) {
             $course->removeTeacher($this);
         }
+
+        return $this;
+    }
+
+    public function isAuthorized(): ?bool
+    {
+        return $this->authorized;
+    }
+
+    public function setAuthorized(bool $authorized): static
+    {
+        $this->authorized = $authorized;
 
         return $this;
     }
