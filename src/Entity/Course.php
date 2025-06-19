@@ -69,6 +69,7 @@ class Course
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $duration = null;
 
+    #[Groups(['course:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
