@@ -14,12 +14,15 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use App\CustomFilters\CaseInsensitiveSearchFilter;
 use App\Repository\TeacherRepository;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: TeacherRepository::class)]
 #[ApiResource(operations: [
     new GetCollection(),
@@ -31,7 +34,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ])]
 #[ApiFilter(CaseInsensitiveSearchFilter::class, properties: ["name", "surname"])]
 #[ApiFilter(SearchFilter::class, properties: ['authorized' => 'exact', 'm_user.id' => 'exact'])]
-#[ApiFilter(OrderFilter::class, properties: ['name'])]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'authorized'])]
 class Teacher
 {
     #[Groups(['teacher:collection'])]
@@ -73,9 +76,18 @@ class Teacher
     #[ORM\Column]
     private ?bool $authorized = false;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->courses = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function setDefaultCreatedAt()
+    {
+        $this->createdAt = new DateTimeImmutable();
     }
 
 
@@ -191,6 +203,18 @@ class Teacher
     public function setAuthorized(bool $authorized): static
     {
         $this->authorized = $authorized;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

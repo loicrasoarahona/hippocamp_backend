@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection']]),
-        new Get(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection', 'teacher:collection']]),
+        new Get(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection', 'teacher:collection', 'coursePage:read']]),
         new Post(),
         new Put(),
         new Patch(),
