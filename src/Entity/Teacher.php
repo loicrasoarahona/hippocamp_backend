@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     new Delete()
 ])]
 #[ApiFilter(CaseInsensitiveSearchFilter::class, properties: ["name", "surname"])]
-#[ApiFilter(SearchFilter::class, properties: ['authorized' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['authorized' => 'exact', 'm_user.id' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['name'])]
 class Teacher
 {

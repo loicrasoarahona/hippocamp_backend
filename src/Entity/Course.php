@@ -78,6 +78,10 @@ class Course
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
+    #[Groups(['course:collection'])]
+    #[ORM\ManyToOne]
+    private ?CoursePage $welcomePage = null;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
@@ -205,6 +209,18 @@ class Course
     public function setImage(?string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getWelcomePage(): ?CoursePage
+    {
+        return $this->welcomePage;
+    }
+
+    public function setWelcomePage(?CoursePage $welcomePage): static
+    {
+        $this->welcomePage = $welcomePage;
 
         return $this;
     }
