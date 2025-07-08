@@ -79,6 +79,10 @@ class Teacher
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups(['teacher:collection'])]
+    #[ORM\Column(length: 1)]
+    private ?string $gender = null;
+
     public function __construct()
     {
         $this->courses = new ArrayCollection();
@@ -215,6 +219,18 @@ class Teacher
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
 
         return $this;
     }

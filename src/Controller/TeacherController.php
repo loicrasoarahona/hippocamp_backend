@@ -54,6 +54,7 @@ class TeacherController extends AbstractController
             $teacher->setEmail($data['email']);
             $teacher->setAddress($data['address']);
             $teacher->setBirthdate(new DateTime($data['birthdate']));
+            $teacher->setGender($data['gender']);
 
             $this->em->persist($teacher);
 

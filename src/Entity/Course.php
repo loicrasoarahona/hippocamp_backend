@@ -82,10 +82,18 @@ class Course
     #[ORM\ManyToOne]
     private ?CoursePage $welcomePage = null;
 
+    #[Groups(['course:collection'])]
+    /**
+     * @var Collection<int, CourseEvent>
+     */
+    #[ORM\OneToMany(targetEntity: CourseEvent::class, mappedBy: 'course', orphanRemoval: true)]
+    private Collection $courseEvents;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->courseEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -221,6 +229,36 @@ class Course
     public function setWelcomePage(?CoursePage $welcomePage): static
     {
         $this->welcomePage = $welcomePage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseEvent>
+     */
+    public function getCourseEvents(): Collection
+    {
+        return $this->courseEvents;
+    }
+
+    public function addCourseEvent(CourseEvent $courseEvent): static
+    {
+        if (!$this->courseEvents->contains($courseEvent)) {
+            $this->courseEvents->add($courseEvent);
+            $courseEvent->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourseEvent(CourseEvent $courseEvent): static
+    {
+        if ($this->courseEvents->removeElement($courseEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($courseEvent->getCourse() === $this) {
+                $courseEvent->setCourse(null);
+            }
+        }
 
         return $this;
     }
