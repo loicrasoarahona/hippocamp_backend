@@ -11,13 +11,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource]
 class ContentBlockType
 {
-    #[Groups(['coursePage:read'])]
+    #[Groups(['coursePage:read', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['coursePage:read'])]
+    #[Groups(['coursePage:read', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

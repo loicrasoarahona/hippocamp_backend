@@ -16,13 +16,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(CaseInsensitiveSearchFilter::class, properties: ["name"])]
 class CourseCategory
 {
-    #[Groups(['courseCategory:collection'])]
+    #[Groups(['courseCategory:collection', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['courseCategory:collection'])]
+    #[Groups(['courseCategory:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

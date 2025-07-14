@@ -37,29 +37,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(OrderFilter::class, properties: ['name', 'authorized'])]
 class Teacher
 {
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $birthdate = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
@@ -79,7 +79,7 @@ class Teacher
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['teacher:collection'])]
+    #[Groups(['teacher:collection', "course:item"])]
     #[ORM\Column(length: 1)]
     private ?string $gender = null;
 

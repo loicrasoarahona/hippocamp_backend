@@ -12,30 +12,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource]
 class ContentBlock
 {
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?ContentBlockType $type = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
     #[ORM\Column(nullable: true)]
     private ?int $yIndex = null;
 

@@ -12,21 +12,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource]
 class CourseEvent
 {
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?CourseEventType $type = null;
@@ -35,15 +35,15 @@ class CourseEvent
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column]
     private ?\DateTime $startDate = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(nullable: true)]
     private ?\DateTime $endDate = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 

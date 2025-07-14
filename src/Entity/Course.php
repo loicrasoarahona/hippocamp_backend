@@ -25,75 +25,84 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection']]),
-        new Get(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection', 'teacher:collection', 'coursePage:read']]),
+        new Get(normalizationContext: ['groups' => ['course:item']]),
         new Post(),
-        new Put(),
-        new Patch(),
+        new Put(denormalizationContext: ['groups' => ['course:item']]),
+        new Patch(denormalizationContext: ['groups' => ['course:item']]),
         new Delete()
     ]
 )]
 class Course
 {
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateStart = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultLocation = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     /**
      * @var Collection<int, Teacher>
      */
     #[ORM\ManyToMany(targetEntity: Teacher::class, inversedBy: 'courses')]
     private Collection $teachers;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     /**
      * @var Collection<int, CourseCategory>
      */
     #[ORM\ManyToMany(targetEntity: CourseCategory::class, inversedBy: 'courses')]
     private Collection $categories;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $duration = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     #[ORM\ManyToOne]
     private ?CoursePage $welcomePage = null;
 
-    #[Groups(['course:collection'])]
+    #[Groups(['course:collection', 'course:item'])]
     /**
      * @var Collection<int, CourseEvent>
      */
     #[ORM\OneToMany(targetEntity: CourseEvent::class, mappedBy: 'course', orphanRemoval: true)]
     private Collection $courseEvents;
 
+    #[Groups(['course:item'])]
+    /**
+     * @var Collection<int, CoursePart>
+     */
+    #[ORM\OneToMany(targetEntity: CoursePart::class, mappedBy: 'course', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(['yIndex' => 'ASC'])]
+    private Collection $courseParts;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->courseEvents = new ArrayCollection();
+        $this->courseParts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -257,6 +266,36 @@ class Course
             // set the owning side to null (unless already changed)
             if ($courseEvent->getCourse() === $this) {
                 $courseEvent->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoursePart>
+     */
+    public function getCourseParts(): Collection
+    {
+        return $this->courseParts;
+    }
+
+    public function addCoursePart(CoursePart $coursePart): static
+    {
+        if (!$this->courseParts->contains($coursePart)) {
+            $this->courseParts->add($coursePart);
+            $coursePart->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursePart(CoursePart $coursePart): static
+    {
+        if ($this->courseParts->removeElement($coursePart)) {
+            // set the owning side to null (unless already changed)
+            if ($coursePart->getCourse() === $this) {
+                $coursePart->setCourse(null);
             }
         }
 
