@@ -34,47 +34,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Course
 {
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateStart = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultLocation = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     /**
      * @var Collection<int, Teacher>
      */
     #[ORM\ManyToMany(targetEntity: Teacher::class, inversedBy: 'courses')]
     private Collection $teachers;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     /**
      * @var Collection<int, CourseCategory>
      */
     #[ORM\ManyToMany(targetEntity: CourseCategory::class, inversedBy: 'courses')]
     private Collection $categories;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $duration = null;
 
-    #[Groups(['course:collection', 'course:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
