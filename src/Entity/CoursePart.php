@@ -30,21 +30,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class CoursePart
 {
-    #[Groups(['course:item'])]
+    #[Groups(['course:item', 'courseChapter:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:item'])]
+    #[Groups(['course:item', 'courseChapter:item'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $name = null;
 
+    #[Groups(['courseChapter:item'])]
     #[ORM\ManyToOne(inversedBy: 'courseParts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
-    #[Groups(['course:item'])]
+    #[Groups(['course:item', 'courseChapter:item'])]
     #[ORM\Column(nullable: true)]
     private ?int $yIndex = null;
 

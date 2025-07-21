@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[ApiFilter(CaseInsensitiveSearchFilter::class, properties: ["name"])]
-#[ApiFilter(SearchFilter::class, properties: ['categories' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['categories' => 'exact', 'teachers' => 'exact'])]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['course:collection', 'courseCategory:collection']]),
@@ -34,47 +34,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Course
 {
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateStart = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultLocation = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     /**
      * @var Collection<int, Teacher>
      */
     #[ORM\ManyToMany(targetEntity: Teacher::class, inversedBy: 'courses')]
     private Collection $teachers;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     /**
      * @var Collection<int, CourseCategory>
      */
     #[ORM\ManyToMany(targetEntity: CourseCategory::class, inversedBy: 'courses')]
     private Collection $categories;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $duration = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 

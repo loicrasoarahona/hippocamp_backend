@@ -24,13 +24,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ])]
 class CoursePage
 {
-    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item', 'courseChapter:item'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['coursePage:create', 'coursePage:read', 'course:item'])]
+    #[Groups(['coursePage:create', 'coursePage:read', 'course:item', 'courseChapter:item'])]
     /**
      * @var Collection<int, ContentBlock>
      */
