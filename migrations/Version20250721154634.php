@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250712124159 extends AbstractMigration
+final class Version20250721154634 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,13 +21,7 @@ final class Version20250712124159 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE course_part (id SERIAL NOT NULL, course_id INT NOT NULL, name TEXT NOT NULL, y_index INT DEFAULT NULL, PRIMARY KEY(id))
-        SQL);
-        $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_81ADADC0591CC992 ON course_part (course_id)
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE course_part ADD CONSTRAINT FK_81ADADC0591CC992 FOREIGN KEY (course_id) REFERENCES course (id) NOT DEFERRABLE INITIALLY IMMEDIATE
+            ALTER TABLE quiz_question_option ALTER correct SET NOT NULL
         SQL);
     }
 
@@ -38,10 +32,7 @@ final class Version20250712124159 extends AbstractMigration
             CREATE SCHEMA public
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE course_part DROP CONSTRAINT FK_81ADADC0591CC992
-        SQL);
-        $this->addSql(<<<'SQL'
-            DROP TABLE course_part
+            ALTER TABLE quiz_question_option ALTER correct DROP NOT NULL
         SQL);
     }
 }

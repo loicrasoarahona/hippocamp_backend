@@ -33,7 +33,8 @@ class QuizQuestionOption
 
     #[Groups(["quizQuestionOption:collection", "quiz:item"])]
     #[ORM\Column]
-    private ?bool $isCorrect = null;
+    private ?bool $correct = null;
+
 
     public function getId(): ?int
     {
@@ -76,15 +77,14 @@ class QuizQuestionOption
         return $this;
     }
 
-
     public function isCorrect(): ?bool
     {
-        return $this->isCorrect;
+        return $this->correct;
     }
 
-    public function setIsCorrect(bool $isCorrect): static
+    public function setCorrect(bool $correct): static
     {
-        $this->isCorrect = $isCorrect;
+        $this->correct = $correct;
 
         return $this;
     }
