@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\QuizRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,26 +24,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
     new Get(normalizationContext: ["groups" => ["quiz:item"]]),
     new Post(denormalizationContext: ["groups" => ["quiz:collection", "quizQuestion:collection", "quizQuestionOption:collection"]]),
     new Put(),
+    new Patch(),
     new Delete()
 ])]
+#[ApiFilter(SearchFilter::class, properties: ['course' => 'exact'])]
+#[ORM\HasLifecycleCallbacks]
 class Quiz
 {
-    #[Groups(['quiz:collection', "quiz:item"])]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['quiz:collection', "quiz:item"])]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[Groups(['quiz:collection', "quiz:item"])]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
     /**
      * @var Collection<int, QuizQuestion>
      */
     #[ORM\OneToMany(targetEntity: QuizQuestion::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ["persist"])]
     private Collection $questions;
+
+    #[Groups(['preCourseQuiz:collection'])]
+    #[ORM\ManyToOne(inversedBy: 'quizzes')]
+    private ?Course $course = null;
+
+    #[Groups(['preCourseQuiz:collection'])]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[Groups(['preCourseQuiz:collection'])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\PrePersist]
+    public function setDefaultCreatedAt()
+    {
+        $this->createdAt = new DateTimeImmutable();
+    }
 
     public function __construct()
     {
@@ -89,6 +114,42 @@ class Quiz
                 $question->setQuiz(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCourse(): ?Course
+    {
+        return $this->course;
+    }
+
+    public function setCourse(?Course $course): static
+    {
+        $this->course = $course;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

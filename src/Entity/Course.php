@@ -97,12 +97,26 @@ class Course
     #[ORM\OrderBy(['yIndex' => 'ASC'])]
     private Collection $courseParts;
 
+    /**
+     * @var Collection<int, Quiz>
+     */
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'course')]
+    private Collection $quizzes;
+
+    /**
+     * @var Collection<int, PreCourseQuiz>
+     */
+    #[ORM\OneToMany(targetEntity: PreCourseQuiz::class, mappedBy: 'course', orphanRemoval: true)]
+    private Collection $preCourseQuizzes;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->courseEvents = new ArrayCollection();
         $this->courseParts = new ArrayCollection();
+        $this->quizzes = new ArrayCollection();
+        $this->preCourseQuizzes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -296,6 +310,66 @@ class Course
             // set the owning side to null (unless already changed)
             if ($coursePart->getCourse() === $this) {
                 $coursePart->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Quiz>
+     */
+    public function getQuizzes(): Collection
+    {
+        return $this->quizzes;
+    }
+
+    public function addQuiz(Quiz $quiz): static
+    {
+        if (!$this->quizzes->contains($quiz)) {
+            $this->quizzes->add($quiz);
+            $quiz->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuiz(Quiz $quiz): static
+    {
+        if ($this->quizzes->removeElement($quiz)) {
+            // set the owning side to null (unless already changed)
+            if ($quiz->getCourse() === $this) {
+                $quiz->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PreCourseQuiz>
+     */
+    public function getPreCourseQuizzes(): Collection
+    {
+        return $this->preCourseQuizzes;
+    }
+
+    public function addPreCourseQuiz(PreCourseQuiz $preCourseQuiz): static
+    {
+        if (!$this->preCourseQuizzes->contains($preCourseQuiz)) {
+            $this->preCourseQuizzes->add($preCourseQuiz);
+            $preCourseQuiz->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreCourseQuiz(PreCourseQuiz $preCourseQuiz): static
+    {
+        if ($this->preCourseQuizzes->removeElement($preCourseQuiz)) {
+            // set the owning side to null (unless already changed)
+            if ($preCourseQuiz->getCourse() === $this) {
+                $preCourseQuiz->setCourse(null);
             }
         }
 
