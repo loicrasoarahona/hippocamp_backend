@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CourseChapterRepository::class)]
 #[ApiResource(
-    order: ['yIndex' => 'ASC'],
+    order: ['yIndex' => 'ASC', 'id' => 'ASC'],
     operations: [
         new GetCollection(),
         new Get(normalizationContext: ['groups' => ['courseChapter:item']]),

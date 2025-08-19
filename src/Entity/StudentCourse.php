@@ -43,13 +43,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(OrderFilter::class, properties: ['requestedAt', 'registeredAt'])]
 class StudentCourse
 {
-    #[Groups(["studentCourse:collection"])]
+    #[Groups(["studentCourse:collection", "student:item", "student:collection"])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(["studentCourse:collection"])]
+    #[Groups(["studentCourse:collection", "student:item", "student:collection"])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
@@ -59,16 +59,16 @@ class StudentCourse
     #[ORM\JoinColumn(nullable: false)]
     private ?Student $student = null;
 
-    #[Groups(["studentCourse:collection"])]
+    #[Groups(["studentCourse:collection", "student:item", "student:collection"])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $registeredAt = null;
 
 
-    #[Groups(["studentCourse:collection"])]
+    #[Groups(["studentCourse:collection", "student:item", "student:collection"])]
     #[ORM\Column]
     private ?\DateTimeImmutable $requestedAt = null;
 
-    #[Groups(["studentCourse:collection"])]
+    #[Groups(["studentCourse:collection", "student:item", "student:collection"])]
     #[ORM\ManyToOne]
     private ?User $registeredBy = null;
 

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
@@ -16,9 +18,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: QuizAnswerRepository::class)]
+#[ApiFilter(SearchFilter::class, properties: ['m_user' => 'exact', 'quiz' => 'exact'])]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(normalizationContext: ['groups' => ['quizAnswer:collection']]),
         new Get(),
         new Post(denormalizationContext: ['groups' => ['quizAnswer:item']]),
         new Put(denormalizationContext: ['groups' => ['quizAnswer:item']]),
@@ -28,27 +31,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class QuizAnswer
 {
-    #[Groups(['quizAnswer:item'])]
+    #[Groups(['quizAnswer:item', 'quizAnswer:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['quizAnswer:item'])]
+    #[Groups(['quizAnswer:item', 'quizAnswer:collection'])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
 
-    #[Groups(['quizAnswer:item'])]
+    #[Groups(['quizAnswer:item', 'quizAnswer:collection'])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Quiz $quiz = null;
 
-    #[Groups(['quizAnswer:item'])]
+    #[Groups(['quizAnswer:item', 'quizAnswer:collection'])]
     #[ORM\Column(nullable: true)]
     private ?float $score = null;
 
-    #[Groups(['quizAnswer:item'])]
+    #[Groups(['quizAnswer:item', 'quizAnswer:collection'])]
     /**
      * @var Collection<int, QuizQuestionOption>
      */

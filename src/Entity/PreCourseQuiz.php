@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PreCourseQuizRepository::class)]
 #[ApiFilter(SearchFilter::class, properties: ['course' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['coursePartSuggestion.yIndex', 'coursePartSuggestion.id'])]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['preCourseQuiz:collection']]),

@@ -5,6 +5,12 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\StudentRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,41 +20,51 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ["groups" => ["student:collection"]]),
+        new Get(normalizationContext: ["groups" => ["student:item"]]),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete()
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ['m_user.id' => 'exact'])]
 class Student
 {
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
 
-    #[Groups(['studentCourse:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $birthdate = null;
 
+    #[Groups(["student:item", "student:collection"])]
     /**
      * @var Collection<int, StudentCourse>
      */

@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CoursePartRepository::class)]
 #[ApiResource(
-    order: ['yIndex' => 'ASC'],
+    order: ['yIndex' => 'ASC', 'id' => 'ASC'],
     operations: [
         new GetCollection(),
         new Get(),
@@ -54,7 +54,7 @@ class CoursePart
      * @var Collection<int, CourseChapter>
      */
     #[ORM\OneToMany(targetEntity: CourseChapter::class, mappedBy: 'coursePart', orphanRemoval: true, cascade: ['persist'])]
-    #[ORM\OrderBy(['yIndex' => 'ASC'])]
+    #[ORM\OrderBy(['yIndex' => 'ASC', 'id' => 'ASC'])]
     private Collection $courseChapters;
 
     public function __construct()

@@ -34,47 +34,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Course
 {
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', "student:item", "student:collection", 'coursePrivateChat:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $dateStart = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultLocation = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     /**
      * @var Collection<int, Teacher>
      */
     #[ORM\ManyToMany(targetEntity: Teacher::class, inversedBy: 'courses')]
     private Collection $teachers;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     /**
      * @var Collection<int, CourseCategory>
      */
     #[ORM\ManyToMany(targetEntity: CourseCategory::class, inversedBy: 'courses')]
     private Collection $categories;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $duration = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -109,6 +109,12 @@ class Course
     #[ORM\OneToMany(targetEntity: PreCourseQuiz::class, mappedBy: 'course', orphanRemoval: true)]
     private Collection $preCourseQuizzes;
 
+    /**
+     * @var Collection<int, CoursePrivateChat>
+     */
+    #[ORM\OneToMany(targetEntity: CoursePrivateChat::class, mappedBy: 'course', orphanRemoval: true)]
+    private Collection $coursePrivateChats;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
@@ -117,6 +123,7 @@ class Course
         $this->courseParts = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->preCourseQuizzes = new ArrayCollection();
+        $this->coursePrivateChats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -370,6 +377,36 @@ class Course
             // set the owning side to null (unless already changed)
             if ($preCourseQuiz->getCourse() === $this) {
                 $preCourseQuiz->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoursePrivateChat>
+     */
+    public function getCoursePrivateChats(): Collection
+    {
+        return $this->coursePrivateChats;
+    }
+
+    public function addCoursePrivateChat(CoursePrivateChat $coursePrivateChat): static
+    {
+        if (!$this->coursePrivateChats->contains($coursePrivateChat)) {
+            $this->coursePrivateChats->add($coursePrivateChat);
+            $coursePrivateChat->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursePrivateChat(CoursePrivateChat $coursePrivateChat): static
+    {
+        if ($this->coursePrivateChats->removeElement($coursePrivateChat)) {
+            // set the owning side to null (unless already changed)
+            if ($coursePrivateChat->getCourse() === $this) {
+                $coursePrivateChat->setCourse(null);
             }
         }
 

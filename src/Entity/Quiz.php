@@ -31,32 +31,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class Quiz
 {
-    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection', 'quizAnswer:item', 'quizAnswer:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
-    #[ORM\Column(length: 255)]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection', 'quizAnswer:item'])]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection'])]
+    #[Groups(['quiz:collection', "quiz:item", 'preCourseQuiz:collection', 'quizAnswer:item'])]
     /**
      * @var Collection<int, QuizQuestion>
      */
     #[ORM\OneToMany(targetEntity: QuizQuestion::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ["persist"])]
     private Collection $questions;
 
-    #[Groups(['preCourseQuiz:collection'])]
+    #[Groups(['preCourseQuiz:collection', 'quizAnswer:item'])]
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
     private ?Course $course = null;
 
-    #[Groups(['preCourseQuiz:collection'])]
+    #[Groups(['preCourseQuiz:collection', 'quizAnswer:item'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['preCourseQuiz:collection'])]
+    #[Groups(['preCourseQuiz:collection', 'quiz:collection', 'quiz:item', 'quizAnswer:item'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
