@@ -47,4 +47,16 @@ class StudentCourseController extends AbstractController
         $normalized = $this->serializer->normalize($item, null, ["groups" => ["studentCourse:collection"]]);
         return new JsonResponse($normalized);
     }
+
+    #[Route('/nb_pending_requests', methods: ['GET'])]
+    public function nbPendingRequests(Request $request)
+    {
+        $retour = $this->em->getRepository(StudentCourse::class)->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->where('e.registeredAt IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return new JsonResponse($retour);
+    }
 }
