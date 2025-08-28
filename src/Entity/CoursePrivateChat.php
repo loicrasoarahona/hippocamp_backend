@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['coursePrivateChat:collection']]),
-        new Get(),
+        new Get(normalizationContext: ['groups' => ['coursePrivateChat:collection']]),
         new Post(),
         new Put(),
         new Patch(),
@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[UniqueEntity(fields: ['course', 'student'], message: 'Cet utilisateur ne peut pas avoir plusieurs discussions associées à ce cours.')]
-#[ApiFilter(SearchFilter::class, properties: ['course' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['course' => 'exact', 'student' => 'exact', 'course.teachers' => 'exact', 'student.name' => 'ipartial', 'student.surname' => 'ipartial'])]
 class CoursePrivateChat
 {
     #[Groups(['coursePrivateChat:collection'])]
@@ -49,17 +49,33 @@ class CoursePrivateChat
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
-    #[Groups(['coursePrivateChat:collection'])]
     /**
      * @var Collection<int, CoursePrivateChatMessage>
      */
     #[ORM\OneToMany(targetEntity: CoursePrivateChatMessage::class, mappedBy: 'chat', orphanRemoval: true)]
     private Collection $messages;
 
+    #[Groups(['coursePrivateChat:collection'])]
+    #[ORM\ManyToOne]
+    private ?CoursePrivateChatMessage $lastMessage = null;
+
+    /**
+     * @var Collection<int, CoursePrivateChatAnnouncement>
+     */
+    #[ORM\OneToMany(targetEntity: CoursePrivateChatAnnouncement::class, mappedBy: 'chat', orphanRemoval: true)]
+    private Collection $announcements;
+
+    #[Groups(['coursePrivateChat:collection'])]
+    #[ORM\ManyToOne]
+    private ?CoursePrivateChatAnnouncement $lastAnnouncement = null;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->announcements = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -116,6 +132,60 @@ class CoursePrivateChat
                 $message->setChat(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastMessage(): ?CoursePrivateChatMessage
+    {
+        return $this->lastMessage;
+    }
+
+    public function setLastMessage(?CoursePrivateChatMessage $lastMessage): static
+    {
+        $this->lastMessage = $lastMessage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoursePrivateChatAnnouncement>
+     */
+    public function getAnnouncements(): Collection
+    {
+        return $this->announcements;
+    }
+
+    public function addAnnouncement(CoursePrivateChatAnnouncement $announcement): static
+    {
+        if (!$this->announcements->contains($announcement)) {
+            $this->announcements->add($announcement);
+            $announcement->setChat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnouncement(CoursePrivateChatAnnouncement $announcement): static
+    {
+        if ($this->announcements->removeElement($announcement)) {
+            // set the owning side to null (unless already changed)
+            if ($announcement->getChat() === $this) {
+                $announcement->setChat(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLastAnnouncement(): ?CoursePrivateChatAnnouncement
+    {
+        return $this->lastAnnouncement;
+    }
+
+    public function setLastAnnouncement(?CoursePrivateChatAnnouncement $lastAnnouncement): static
+    {
+        $this->lastAnnouncement = $lastAnnouncement;
 
         return $this;
     }

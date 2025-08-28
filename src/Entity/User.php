@@ -11,6 +11,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\EventListener\UserListener;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[Groups(['user:collection'])]
+    #[Groups(['user:collection', 'coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -46,6 +48,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?UserRole $role = null;
+
+    /**
+     * @var Collection<int, CourseForum>
+     */
+    #[ORM\OneToMany(targetEntity: CourseForum::class, mappedBy: 'm_user')]
+    private Collection $courseForums;
+
+    public function __construct()
+    {
+        $this->courseForums = new ArrayCollection();
+    }
 
 
     public function getRoles(): array
@@ -98,6 +111,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(?UserRole $role): static
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseForum>
+     */
+    public function getCourseForums(): Collection
+    {
+        return $this->courseForums;
+    }
+
+    public function addCourseForum(CourseForum $courseForum): static
+    {
+        if (!$this->courseForums->contains($courseForum)) {
+            $this->courseForums->add($courseForum);
+            $courseForum->setMUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourseForum(CourseForum $courseForum): static
+    {
+        if ($this->courseForums->removeElement($courseForum)) {
+            // set the owning side to null (unless already changed)
+            if ($courseForum->getMUser() === $this) {
+                $courseForum->setMUser(null);
+            }
+        }
 
         return $this;
     }

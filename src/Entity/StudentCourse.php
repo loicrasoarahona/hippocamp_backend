@@ -15,6 +15,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\StudentCourseRepository;
+use App\State\StudentCourseProvider;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[UniqueEntity(fields: ['course', 'student'], message: 'Cet utilisateur est déjà inscrit à ce cours.')]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['studentCourse:collection']]),
+        new GetCollection(normalizationContext: ['groups' => ['studentCourse:collection']], provider: StudentCourseProvider::class),
         new Get(),
         new Post(),
         new Put(),
@@ -40,7 +41,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['course' => 'exact', 'student' => 'exact'])]
 #[ApiFilter(ExistsFilter::class, properties: ['registeredAt'])]
-#[ApiFilter(OrderFilter::class, properties: ['requestedAt', 'registeredAt'])]
+#[ApiFilter(OrderFilter::class, properties: ['requestedAt', 'registeredAt', 'course.name'])]
 class StudentCourse
 {
     #[Groups(["studentCourse:collection", "student:item", "student:collection"])]

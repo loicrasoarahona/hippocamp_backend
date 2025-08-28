@@ -53,7 +53,7 @@ class StudentCourseController extends AbstractController
     {
         $retour = $this->em->getRepository(StudentCourse::class)->createQueryBuilder('e')
             ->select('COUNT(e.id)')
-            ->where('e.registeredAt IS NOT NULL')
+            ->where('e.registeredAt IS NULL')
             ->getQuery()
             ->getSingleScalarResult();
 

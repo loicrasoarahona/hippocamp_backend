@@ -37,17 +37,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(OrderFilter::class, properties: ['name', 'authorized'])]
 class Teacher
 {
-    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item'])]
+    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item'])]
+    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item'])]
+    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 
@@ -55,7 +55,7 @@ class Teacher
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $birthdate = null;
 
-    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item'])]
+    #[Groups(['teacher:collection', 'course:item', 'courseChapter:item', 'coursePrivateChat:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
@@ -63,6 +63,7 @@ class Teacher
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
+    #[Groups(['coursePrivateChat:collection'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
