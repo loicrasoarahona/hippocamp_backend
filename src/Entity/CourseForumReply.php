@@ -2,8 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CourseForumReplyRepository;
+use App\State\CourseForumReplyProvider;
+use App\Type\DisplayName;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +22,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: CourseForumReplyRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(provider: CourseForumReplyProvider::class),
+        new Get(provider: CourseForumReplyProvider::class),
+        new Post(),
+        new Put(),
+        new Patch(),
+        new Delete()
+    ]
+)]
+#[ApiFilter(OrderFilter::class, properties: ['timestamp'])]
+#[ApiFilter(SearchFilter::class, properties: ['forum' => 'exact'])]
 class CourseForumReply
 {
     #[Groups(['courseForum:item'])]
@@ -36,6 +58,8 @@ class CourseForumReply
     #[ORM\ManyToOne(inversedBy: 'replies')]
     #[ORM\JoinColumn(nullable: false)]
     private ?CourseForum $forum = null;
+
+    public ?DisplayName $displayName;
 
     #[ORM\PrePersist]
     public function setDefaultTimestamp()

@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: CourseForumRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Get(),
+        new GetCollection(normalizationContext: ['groups' => ['courseForum:collection']]),
+        new Get(normalizationContext: ['groups' => ['courseForum:collection']]),
         new Post(denormalizationContext: ['groups' => ['courseForum:item']]),
         new Put(),
         new Patch(),
@@ -31,26 +31,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class CourseForum
 {
-    #[Groups(['courseForum:item'])]
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['courseForum:item'])]
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $subject = null;
 
-    #[Groups(['courseForum:item'])]
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
     #[ORM\Column]
     private ?\DateTime $timestamp = null;
 
-    #[Groups(['courseForum:item'])]
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
     #[ORM\ManyToOne(inversedBy: 'forums')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
-    #[Groups(['courseForum:item'])]
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
     #[ORM\ManyToOne(inversedBy: 'courseForums')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
