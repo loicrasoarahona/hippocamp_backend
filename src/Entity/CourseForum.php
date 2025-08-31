@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
@@ -10,6 +12,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\CourseForumRepository;
+use App\State\CourseForumProvider;
+use App\Type\DisplayName;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,14 +25,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: CourseForumRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['courseForum:collection']]),
-        new Get(normalizationContext: ['groups' => ['courseForum:collection']]),
+        new GetCollection(normalizationContext: ['groups' => ['courseForum:collection']], provider: CourseForumProvider::class),
+        new Get(normalizationContext: ['groups' => ['courseForum:collection']], provider: CourseForumProvider::class),
         new Post(denormalizationContext: ['groups' => ['courseForum:item']]),
         new Put(),
         new Patch(),
         new Delete()
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['course' => 'exact', 'subject' => 'ipartial'])]
 class CourseForum
 {
     #[Groups(['courseForum:item', 'courseForum:collection'])]
@@ -61,6 +66,12 @@ class CourseForum
      */
     #[ORM\OneToMany(targetEntity: CourseForumReply::class, mappedBy: 'forum', orphanRemoval: true, cascade: ['persist'])]
     private Collection $replies;
+
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
+    public ?DisplayName $displayName;
+
+    #[Groups(['courseForum:item', 'courseForum:collection'])]
+    public ?int $nbReplies;
 
     #[ORM\PrePersist]
     public function setDefaultTimestamp()
