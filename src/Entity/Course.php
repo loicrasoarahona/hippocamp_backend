@@ -121,6 +121,12 @@ class Course
     #[ORM\OneToMany(targetEntity: CourseForum::class, mappedBy: 'course', orphanRemoval: true)]
     private Collection $forums;
 
+    /**
+     * @var Collection<int, CourseComment>
+     */
+    #[ORM\OneToMany(targetEntity: CourseComment::class, mappedBy: 'course', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->teachers = new ArrayCollection();
@@ -131,6 +137,7 @@ class Course
         $this->preCourseQuizzes = new ArrayCollection();
         $this->coursePrivateChats = new ArrayCollection();
         $this->forums = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -444,6 +451,36 @@ class Course
             // set the owning side to null (unless already changed)
             if ($forum->getCourse() === $this) {
                 $forum->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseComment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(CourseComment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(CourseComment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getCourse() === $this) {
+                $comment->setCourse(null);
             }
         }
 

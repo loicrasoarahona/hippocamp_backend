@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\CoursePrivateChat;
 use App\Entity\CoursePrivateChatAnnouncement;
+use App\Entity\Student;
 use App\Entity\StudentCourse;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -45,5 +46,20 @@ class StudentCourseService
                 $this->em->flush();
             }
         }
+    }
+
+    public function getStudentProgression(StudentCourse $studentCourse)
+    {
+        $countChapters = 0;
+        $endedChapters = 0;
+
+        $course = $studentCourse->getCourse();
+        $parts = $course->getCourseParts();
+        foreach ($parts as $part) {
+            $countChapters += count($part->getCourseChapters());
+        }
+        $endedChapters = count($studentCourse->getEndedChapters());
+
+        return $endedChapters * 100 / $countChapters;
     }
 }

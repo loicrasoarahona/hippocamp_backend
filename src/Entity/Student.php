@@ -33,17 +33,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(SearchFilter::class, properties: ['m_user.id' => 'exact'])]
 class Student
 {
-    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection', 'courseComment:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection', 'courseComment:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection'])]
+    #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection', 'courseComment:collection'])]
     #[ORM\Column(length: 255)]
     private ?string $surname = null;
 

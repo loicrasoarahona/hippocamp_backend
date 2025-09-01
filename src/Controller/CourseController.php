@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Course;
 use App\Entity\CoursePart;
+use App\Service\CourseService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -16,7 +17,29 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CourseController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $em, private SerializerInterface $serializer) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private SerializerInterface $serializer,
+        private CourseService $courseService
+    ) {}
+
+    #[Route('/average_rating', methods: ['GET'])]
+    public function findAverageRating(Request $request)
+    {
+        $course_id = $request->query->get('course_id');
+
+        if (empty($course_id))
+            return new JsonResponse("Empty course_id param", 400);
+
+        $course = $this->em->getRepository(Course::class)->find($course_id);
+        if (empty($course)) {
+            return new JsonResponse("course not found");
+        }
+
+        $retour = $this->courseService->getAverageRating($course);
+
+        return new JsonResponse($retour);
+    }
 
     #[Route('/first_course_part', methods: ['GET'])]
     public function findFirstCoursePart(Request $request)

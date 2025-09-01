@@ -12,59 +12,58 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
-use App\Repository\CoursePrivateChatMessageRepository;
+use App\Repository\CourseCommentRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: CoursePrivateChatMessageRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\Entity(repositoryClass: CourseCommentRepository::class)]
 #[ApiResource(
-    paginationEnabled: true,
-    paginationClientItemsPerPage: true,
+    paginationClientItemsPerPage: true,   // autorise ?itemsPerPage=
+    paginationItemsPerPage: 30,           // valeur par défaut
+    paginationMaximumItemsPerPage: 100,    // borne haute (optionnel)
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['coursePrivateChatMessage:collection']]),
+        new GetCollection(normalizationContext: ['groups' => ['courseComment:collection']]),
         new Get(),
-        new Post(normalizationContext: ['groups' => ['coursePrivateChatMessage:collection']]),
+        new Post(),
         new Put(),
         new Patch(),
         new Delete()
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['chat' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['student' => 'exact', 'course' => 'exact'])]
 #[ApiFilter(OrderFilter::class, properties: ['timestamp'])]
-class CoursePrivateChatMessage
+class CourseComment
 {
-
-    #[Groups(['coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
+    #[Groups(['courseComment:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
+    #[Groups(['courseComment:collection'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[Groups(['coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?MessageType $type = null;
+    #[Groups(['courseComment:collection'])]
+    #[ORM\Column]
+    private ?float $rating = null;
 
-    #[Groups(['coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
+    #[Groups(['courseComment:collection'])]
     #[ORM\Column]
     private ?\DateTime $timestamp = null;
 
-    #[Groups(['coursePrivateChatMessage:collection'])]
-    #[ORM\ManyToOne(inversedBy: 'messages')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?CoursePrivateChat $chat = null;
-
-    #[Groups(['coursePrivateChatMessage:collection', 'coursePrivateChat:collection'])]
+    #[Groups(['courseComment:collection'])]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $m_user = null;
+    private ?Student $student = null;
+
+    #[Groups(['courseComment:collection'])]
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Course $course = null;
 
     #[ORM\PrePersist]
     public function setDefaultTimestamp()
@@ -89,14 +88,14 @@ class CoursePrivateChatMessage
         return $this;
     }
 
-    public function getType(): ?MessageType
+    public function getRating(): ?float
     {
-        return $this->type;
+        return $this->rating;
     }
 
-    public function setType(?MessageType $type): static
+    public function setRating(float $rating): static
     {
-        $this->type = $type;
+        $this->rating = $rating;
 
         return $this;
     }
@@ -113,26 +112,26 @@ class CoursePrivateChatMessage
         return $this;
     }
 
-    public function getChat(): ?CoursePrivateChat
+    public function getStudent(): ?Student
     {
-        return $this->chat;
+        return $this->student;
     }
 
-    public function setChat(?CoursePrivateChat $chat): static
+    public function setStudent(?Student $student): static
     {
-        $this->chat = $chat;
+        $this->student = $student;
 
         return $this;
     }
 
-    public function getMUser(): ?User
+    public function getCourse(): ?Course
     {
-        return $this->m_user;
+        return $this->course;
     }
 
-    public function setMUser(?User $m_user): static
+    public function setCourse(?Course $course): static
     {
-        $this->m_user = $m_user;
+        $this->course = $course;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\StudentCourse;
 use App\Entity\User;
+use App\Service\StudentCourseService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,24 @@ use Symfony\Component\Serializer\SerializerInterface;
 class StudentCourseController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $em, private SerializerInterface $serializer) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private SerializerInterface $serializer,
+        private StudentCourseService $studentCourseService
+    ) {}
+
+    #[Route('/progression', methods: ['GET'])]
+    public function progession(Request $request)
+    {
+        $studentCourseId = $request->query->get('student_course_id');
+        if (empty($studentCourseId)) {
+            return new JsonResponse("Empty student_course_id param");
+        }
+
+        $studentCourse = $this->em->getRepository(StudentCourse::class)->find($studentCourseId);
+        $retour = $this->studentCourseService->getStudentProgression($studentCourse);
+        return new JsonResponse($retour);
+    }
 
     #[Route('/admitStudent', methods: ['POST'])]
     public function admitStudent(Request $request)
