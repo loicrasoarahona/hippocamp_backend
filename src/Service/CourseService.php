@@ -27,7 +27,5 @@ class CourseService
         } catch (\Doctrine\ORM\NoResultException $e) {
             return 0;
         }
-
-        return $retour;
     }
 }

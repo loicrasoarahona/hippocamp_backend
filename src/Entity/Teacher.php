@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: TeacherRepository::class)]
 #[ApiResource(operations: [
-    new GetCollection(),
+    new GetCollection(normalizationContext: ['groups' => ['teacher:collection']]),
     new Get(),
     new Put(),
     new Post(),
@@ -68,15 +68,18 @@ class Teacher
     #[ORM\JoinColumn(nullable: false)]
     private ?User $m_user = null;
 
+    #[Groups(['teacher:collection'])]
     /**
      * @var Collection<int, Course>
      */
     #[ORM\ManyToMany(targetEntity: Course::class, mappedBy: 'teachers')]
     private Collection $courses;
 
+    #[Groups(['teacher:collection'])]
     #[ORM\Column]
     private ?bool $authorized = false;
 
+    #[Groups(['teacher:collection'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 

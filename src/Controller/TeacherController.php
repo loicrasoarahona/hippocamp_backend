@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Teacher;
 use App\Entity\User;
 use App\Entity\UserRole;
+use App\Service\TeacherService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,18 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/normal_api/teachers', name: 'api_teachers_')]
 class TeacherController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $em, private SerializerInterface $serializer) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private SerializerInterface $serializer,
+        private TeacherService $teacherService
+    ) {}
+
+    #[Route('/nb_unauthorized_teachers', methods: ['GET'])]
+    public function nbUnauthorizedTeachers()
+    {
+        $retour = $this->teacherService->getNbUnAuthorizedTeachers();
+        return new JsonResponse($retour);
+    }
 
     #[Route('/create-teacher', methods: ['POST'])]
     public function createTeacher(Request $request): JsonResponse

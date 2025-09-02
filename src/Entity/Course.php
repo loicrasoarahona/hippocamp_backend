@@ -34,13 +34,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Course
 {
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', "student:item", "student:collection", 'coursePrivateChat:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', "student:item", "student:collection", 'coursePrivateChat:collection', 'teacher:collection'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection'])]
+    #[Groups(['course:collection', 'course:item', 'studentCourse:collection', 'courseChapter:item', 'coursePrivateChat:collection', 'teacher:collection', "student:collection"])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 

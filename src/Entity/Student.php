@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -11,6 +12,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\CustomFilters\StudentByCourseNameFilter;
+use App\CustomFilters\StudentByFullNameFilter;
 use App\Repository\StudentRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,6 +34,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['m_user.id' => 'exact'])]
+#[ApiFilter(StudentByCourseNameFilter::class)]
+#[ApiFilter(StudentByFullNameFilter::class)]
+#[ApiFilter(OrderFilter::class, properties: ['name', 'surname'])]
 class Student
 {
     #[Groups(['studentCourse:collection', "student:item", "student:collection", 'coursePrivateChat:collection', 'courseComment:collection'])]
